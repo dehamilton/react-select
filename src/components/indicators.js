@@ -1,6 +1,7 @@
 // @flow
+/** @jsx jsx */
 import React, { type Node } from 'react';
-import { injectGlobal, css } from 'emotion';
+import { ClassNames, Global, jsx } from '@emotion/core';
 
 import { type CommonProps } from '../types';
 import type { Theme } from '../types';
@@ -16,13 +17,13 @@ const Svg = ({ size, ...props }: { size: number }) => (
     viewBox="0 0 20 20"
     aria-hidden="true"
     focusable="false"
-    className={css({
+    css={{
       display: 'inline-block',
       fill: 'currentColor',
       lineHeight: 1,
       stroke: 'currentColor',
       strokeWidth: 0,
-    })}
+    }}
     {...props}
   />
 );
@@ -71,19 +72,23 @@ export const dropdownIndicatorCSS = baseCSS;
 export const DropdownIndicator = (props: IndicatorProps) => {
   const { children, className, cx, getStyles, innerProps } = props;
   return (
-    <div
-      {...innerProps}
-      className={cx(
-        css(getStyles('dropdownIndicator', props)),
-        {
-          'indicator': true,
-          'dropdown-indicator': true,
-        },
-        className,
+    <ClassNames>
+      {({ css }) => (
+        <div
+          {...innerProps}
+          className={cx(
+            css(getStyles('dropdownIndicator', props)),
+            {
+              'indicator': true,
+              'dropdown-indicator': true,
+            },
+            className,
+          )}
+        >
+          {children}
+        </div>
       )}
-    >
-      {children}
-    </div>
+    </ClassNames>
   );
 };
 DropdownIndicator.defaultProps = {
@@ -95,18 +100,22 @@ export const clearIndicatorCSS = baseCSS;
 export const ClearIndicator = (props: IndicatorProps) => {
   const { children, className, cx, getStyles, innerProps } = props;
   return (
-    <div
-      {...innerProps}
-      className={cx(
-        css(getStyles('clearIndicator', props)),
-        {
-          'indicator': true,
-          'clear-indicator': true,
-        },
-        className)}
-    >
-      {children}
-    </div>
+    <ClassNames>
+      {({ css }) => (
+        <div
+          {...innerProps}
+          className={cx(
+            css(getStyles('clearIndicator', props)),
+            {
+              'indicator': true,
+              'clear-indicator': true,
+            },
+            className)}
+        >
+          {children}
+        </div>
+      )}
+    </ClassNames>
   );
 };
 
@@ -134,14 +143,18 @@ export const indicatorSeparatorCSS = ({
 export const IndicatorSeparator = (props: IndicatorProps) => {
   const { className, cx, getStyles, innerProps } = props;
   return (
-    <span
-      {...innerProps}
-      className={cx(
-        css(getStyles('indicatorSeparator', props)),
-        { 'indicator-separator': true },
-        className
+    <ClassNames>
+      {({ css }) => (
+        <span
+          {...innerProps}
+          className={cx(
+            css(getStyles('indicatorSeparator', props)),
+            { 'indicator-separator': true },
+            className
+          )}
+        />
       )}
-    />
+    </ClassNames>
   );
 };
 
@@ -192,12 +205,6 @@ const LoadingDot = ({ color, delay, offset }: DotProps) => (
   />
 );
 
-// eslint-disable-next-line no-unused-expressions
-injectGlobal`@keyframes ${keyframesName} {
-  0%, 80%, 100% { opacity: 0; }
-  40% { opacity: 1; }
-};`;
-
 export type LoadingIconProps = {
   /** Props that will be passed on to the children. */
   innerProps: any,
@@ -214,21 +221,35 @@ export const LoadingIndicator = (props: LoadingIconProps) => {
   const color = isFocused ? colors.neutral80 : colors.neutral20;
 
   return (
-    <div
-      {...innerProps}
-      className={cx(
-        css(getStyles('loadingIndicator', props)),
-        {
-          'indicator': true,
-          'loading-indicator': true,
-        },
-        className
+    <ClassNames>
+      {({ css }) => (
+        <React.Fragment>
+          <Global
+            // $FlowFixMe
+            styles={css`@keyframes ${keyframesName} {
+              0%, 80%, 100% { opacity: 0; }
+              40% { opacity: 1; }
+              };`
+            }
+          />
+          <div
+            {...innerProps}
+            className={cx(
+              css(getStyles('loadingIndicator', props)),
+              {
+                'indicator': true,
+                'loading-indicator': true,
+              },
+              className
+            )}
+          >
+            <LoadingDot color={color} delay={0} offset={isRtl} />
+            <LoadingDot color={color} delay={160} offset />
+            <LoadingDot color={color} delay={320} offset={!isRtl} />
+          </div>
+        </React.Fragment>
       )}
-    >
-      <LoadingDot color={color} delay={0} offset={isRtl} />
-      <LoadingDot color={color} delay={160} offset />
-      <LoadingDot color={color} delay={320} offset={!isRtl} />
-    </div>
+    </ClassNames>
   );
 };
 LoadingIndicator.defaultProps = { size: 4 };

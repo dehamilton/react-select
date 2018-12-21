@@ -1,6 +1,6 @@
 // @flow
 import React, { type Node, type ElementRef } from 'react';
-import { css as emotionCSS } from 'emotion';
+import { ClassNames } from '@emotion/core';
 
 import type { CommonProps, PropsWithStyles } from '../types';
 
@@ -54,17 +54,21 @@ export const css = ({
 const Control = (props: ControlProps) => {
   const { children, cx, getStyles, className, isDisabled, isFocused, innerRef, innerProps } = props;
   return (
-    <div
-      ref={innerRef}
-      className={cx(emotionCSS(getStyles('control', props)), {
-        'control': true,
-        'control--is-disabled': isDisabled,
-        'control--is-focused': isFocused
-      }, className)}
-      {...innerProps}
-    >
-      {children}
-    </div>
+    <ClassNames>
+      {({ css }) => (
+        <div
+          ref={innerRef}
+          className={cx(css(getStyles('control', props)), {
+            'control': true,
+            'control--is-disabled': isDisabled,
+            'control--is-focused': isFocused
+          }, className)}
+          {...innerProps}
+        >
+          {children}
+        </div>
+      )}
+    </ClassNames>
   );
 };
 

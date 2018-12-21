@@ -1,11 +1,12 @@
 // @flow
-import React, {
+/** @jsx jsx */
+import {
   Component,
   type Element as ReactElement,
   type ElementRef,
   type Node,
 } from 'react';
-import { css } from 'emotion';
+import { ClassNames, jsx } from '@emotion/core';
 import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
 
@@ -316,12 +317,25 @@ export class MenuPlacer extends Component<MenuPlacerProps, MenuState> {
 
 const Menu = (props: MenuProps) => {
   const { children, className, cx, getStyles, innerRef, innerProps } = props;
-  const cn = cx(css(getStyles('menu', props)), { menu: true }, className);
 
   return (
-    <div className={cn} {...innerProps} ref={innerRef}>
-      {children}
-    </div>
+    <ClassNames>
+      {({ css }) => (
+        <div
+          className={cx(
+            css(getStyles('menu', props)),
+            {
+              menu: true
+            },
+            className
+            )}
+          {...innerProps}
+          ref={innerRef}
+        >
+          {children}
+        </div>
+      )}
+    </ClassNames>
   );
 };
 
@@ -363,19 +377,23 @@ export const menuListCSS = ({
 export const MenuList = (props: MenuListComponentProps) => {
   const { children, className, cx, getStyles, isMulti, innerRef } = props;
   return (
-    <div
-      className={cx(
-        css(getStyles('menuList', props)),
-        {
-          'menu-list': true,
-          'menu-list--is-multi': isMulti,
-        },
-        className
+    <ClassNames>
+      {({ css }) => (
+        <div
+          className={cx(
+            css(getStyles('menuList', props)),
+            {
+              'menu-list': true,
+              'menu-list--is-multi': isMulti,
+            },
+            className
+          )}
+          ref={innerRef}
+        >
+          {children}
+        </div>
       )}
-      ref={innerRef}
-    >
-      {children}
-    </div>
+    </ClassNames>
   );
 };
 
@@ -406,19 +424,23 @@ export type NoticeProps = CommonProps & {
 export const NoOptionsMessage = (props: NoticeProps) => {
   const { children, className, cx, getStyles, innerProps } = props;
   return (
-    <div
-      className={cx(
-        css(getStyles('noOptionsMessage', props)),
-        {
-          'menu-notice': true,
-          'menu-notice--no-options': true,
-        },
-        className
+    <ClassNames>
+      {({ css }) => (
+        <div
+          className={cx(
+            css(getStyles('noOptionsMessage', props)),
+            {
+              'menu-notice': true,
+              'menu-notice--no-options': true,
+            },
+            className
+          )}
+          {...innerProps}
+        >
+          {children}
+        </div>
       )}
-      {...innerProps}
-    >
-      {children}
-    </div>
+    </ClassNames>
   );
 };
 NoOptionsMessage.defaultProps = {
@@ -428,19 +450,23 @@ NoOptionsMessage.defaultProps = {
 export const LoadingMessage = (props: NoticeProps) => {
   const { children, className, cx, getStyles, innerProps } = props;
   return (
-    <div
-      className={cx(
-        css(getStyles('loadingMessage', props)),
-        {
-          'menu-notice': true,
-          'menu-notice--loading': true,
-        },
-        className
+    <ClassNames>
+      {({ css }) => (
+        <div
+          className={cx(
+            css(getStyles('loadingMessage', props)),
+            {
+              'menu-notice': true,
+              'menu-notice--loading': true,
+            },
+            className
+          )}
+          {...innerProps}
+        >
+          {children}
+        </div>
       )}
-      {...innerProps}
-    >
-      {children}
-    </div>
+    </ClassNames>
   );
 };
 LoadingMessage.defaultProps = {
@@ -519,7 +545,7 @@ export class MenuPortal extends Component<MenuPortalProps, MenuPortalState> {
 
     // same wrapper element whether fixed or portalled
     const menuWrapper = (
-      <div className={css(getStyles('menuPortal', state))}>{children}</div>
+      <div css={getStyles('menuPortal', state)}>{children}</div>
     );
 
     return appendTo ? createPortal(menuWrapper, appendTo) : menuWrapper;

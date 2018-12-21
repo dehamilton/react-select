@@ -1,6 +1,6 @@
 // @flow
 import React, { Component, type Node } from 'react';
-import { css } from 'emotion';
+import { ClassNames } from '@emotion/core';
 
 import { CrossIcon } from './indicators';
 import type { CommonProps } from '../types';
@@ -111,7 +111,7 @@ class MultiValue extends Component<MultiValueProps> {
 
     const { Container, Label, Remove } = components;
 
-    const containerInnerProps = {
+    const containerInnerProps = css => ({
       className: cx(
         css(getStyles('multiValue', this.props)),
         {
@@ -121,9 +121,9 @@ class MultiValue extends Component<MultiValueProps> {
         className
       ),
       ...innerProps,
-    };
+    });
 
-    const labelInnerProps = {
+    const labelInnerProps = css => ({
       className: cx(
         css(getStyles('multiValueLabel', this.props)),
         {
@@ -131,9 +131,9 @@ class MultiValue extends Component<MultiValueProps> {
         },
         className
       ),
-    };
+    });
 
-    const removeInnerProps = {
+    const removeInnerProps = css => ({
       className: cx(
         css(getStyles('multiValueRemove', this.props)),
         {
@@ -142,27 +142,31 @@ class MultiValue extends Component<MultiValueProps> {
         className
       ),
       ...removeProps,
-    };
+    });
 
     return (
-      <Container
-        data={data}
-        innerProps={containerInnerProps}
-        selectProps={selectProps}
-      >
-        <Label
-          data={data}
-          innerProps={labelInnerProps}
-          selectProps={selectProps}
-        >
-          {children}
-        </Label>
-        <Remove
-          data={data}
-          innerProps={removeInnerProps}
-          selectProps={selectProps}
-        />
-      </Container>
+      <ClassNames>
+        {({ css }) => (
+          <Container
+            data={data}
+            innerProps={containerInnerProps(css)}
+            selectProps={selectProps}
+          >
+            <Label
+              data={data}
+              innerProps={labelInnerProps(css)}
+              selectProps={selectProps}
+            >
+              {children}
+            </Label>
+            <Remove
+              data={data}
+              innerProps={removeInnerProps(css)}
+              selectProps={selectProps}
+            />
+          </Container>
+        )}
+      </ClassNames>
     );
   }
 }
